@@ -19,14 +19,16 @@ export default {
     methods: {
         addTodo(e) {
             e.preventDefault();
-            const newTodo = {
-                id: uuid.v4(),
-                title: this.title,
-                completed: false
+            if (this.title !== '') {
+                const newTodo = {
+                    id: uuid.v4(),
+                    title: this.title,
+                    completed: false
+                }
+                // send up to parent
+                this.$emit('add-todo', newTodo);
+                this.title = ''
             }
-            // send up to parent
-            this.$emit('add-todo', newTodo);
-            this.title = ''
         }
     }
 }
