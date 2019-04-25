@@ -9,6 +9,10 @@
 import Todos from '../components/Todos';
 import AddTodo from '../components/AddTodo';
 import axios from 'axios';
+import { constants } from 'crypto';
+
+// const API='https://jsonplaceholder.typicode.com/todos';
+const API='http://localhost:5000/api/v1/todos';
 
 export default {
   name: 'Home',
@@ -21,25 +25,57 @@ export default {
       todos: []
     }
   },
+  mounted() {
+    if (localStorage.getItem('mystore')) {
+      try {
+        this.mystore = JSON.parse(localStorage.getItem('mystore'));
+      } catch(e) {
+        localStorage.removeItem('mystore');
+      }
+    }
+  },
   methods: {
     deleteTodo(id) {
-      axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`)
-        .then(res => this.todos = this.todos.filter(todo => todo.id !== id))
-        .catch(err => console.log(err))
+      fetch(`${API}/${id}`, {
+        method: 'delete'
+      })
+        .then(response => {
+          response.json().then(data => {
+            this.todos = this.todos.filter(todo => todo.id !== id)
+          })
+        })
+        .catch(err => console.log('ERRR'))
+      // axios.delete(`${API}/${id}`)
+      //   .then(res => this.todos = this.todos.filter(todo => todo.id !== id))
+      //   .catch(err => console.log(err))
     },
     addTodo(newTodo) {
       const { title, completed } = newTodo;
-      axios.post('https://jsonplaceholder.typicode.com/todos', {
-        title,
-        completed
-      }).then(res => this.todos = [...this.todos, res.data])
-      .catch(err => console.log(err))
+      fetch(API, {
+        method: 'post',
+        body: JSON.stringify({
+          title,
+          description: title,
+          completed
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(response => response.json().then(data => {
+          console.log(data);
+          this.todos = data
+        }))
+        .catch(err => console.log(err))
     }
   },
   created() {
-  axios.get('https://jsonplaceholder.typicode.com/todos?_limit=10')
-    .then(res => this.todos = res.data)
-    .catch(err => console.log(err))
+    fetch(API)
+      .then(response => {
+        response.json().then(data => this.todos = data)
+        // response.json().then(data => console.log(data))
+      })
+      .catch(err => console.log('ERRR'))
   }
 }
 </script>
