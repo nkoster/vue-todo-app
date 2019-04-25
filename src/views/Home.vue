@@ -45,9 +45,6 @@ export default {
           })
         })
         .catch(err => console.log('ERRR'))
-      // axios.delete(`${API}/${id}`)
-      //   .then(res => this.todos = this.todos.filter(todo => todo.id !== id))
-      //   .catch(err => console.log(err))
     },
     addTodo(newTodo) {
       const { title, completed } = newTodo;
@@ -71,10 +68,7 @@ export default {
   },
   created() {
     fetch(API)
-      .then(response => {
-        response.json().then(data => this.todos = data)
-        // response.json().then(data => console.log(data))
-      })
+      .then(response => response.json().then(data => this.todos = data))
       .catch(err => console.log('ERRR'))
   }
 }
