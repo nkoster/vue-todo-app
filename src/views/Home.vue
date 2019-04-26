@@ -1,14 +1,17 @@
 <template>
   <div>
     <AddTodo v-on:add-todo="addTodo" />
-    <Todos v-bind:todos="todos" v-on:del-todo="deleteTodo"/>
+    <Todos
+     v-bind:todos="todos"
+     v-on:del-todo="deleteTodo"
+     v-on:upd-todo="updateTodo"/>
   </div>
 </template>
 
 <script>
 import Todos from '../components/Todos';
 import AddTodo from '../components/AddTodo';
-import axios from 'axios';
+//import axios from 'axios';
 import { constants } from 'crypto';
 
 // const API='https://jsonplaceholder.typicode.com/todos';
@@ -61,6 +64,25 @@ export default {
       })
         .then(response => response.json().then(data => {
           console.log(data);
+          this.todos = data
+        }))
+        .catch(err => console.log(err))
+    },
+    updateTodo(newTodo) {
+      const { title, completed } = newTodo;
+      fetch(`${API}/${newTodo.id}`, {
+        method: 'put',
+        body: JSON.stringify({
+          title,
+          description: title,
+          completed
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(response => response.json().then(data => {
+          console.log(newTodo);
           this.todos = data
         }))
         .catch(err => console.log(err))
